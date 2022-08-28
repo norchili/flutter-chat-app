@@ -1,8 +1,11 @@
+import 'package:chat_app/helpers/show_alert.dart';
+import 'package:chat_app/services/auth_service.dart';
 import 'package:chat_app/widgets/button_blue.dart';
 import 'package:chat_app/widgets/custom_input.dart';
 import 'package:chat_app/widgets/labels.dart';
 import 'package:chat_app/widgets/logo.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -55,6 +58,7 @@ class __FormState extends State<_Form> {
       TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
     return Container(
       margin: const EdgeInsets.only(top: 40.0),
       padding: const EdgeInsets.symmetric(horizontal: 40.0),
@@ -74,10 +78,24 @@ class __FormState extends State<_Form> {
           ),
           //TODO: Crear botton
           ButtonBlue(
-            onPresed: () {
-              print(emailTextEditingController.text);
-              print(passwordTextEditingController.text);
-            },
+            onPresed: authService.autenticando
+                ? null
+                : () async {
+                    FocusScope.of(context).unfocus();
+                    final loginOK = await authService.login(
+                        emailTextEditingController.text.trim(),
+                        passwordTextEditingController.text.trim());
+
+                    if (loginOK) {
+                      //Navegar a otra pantalla
+                      Navigator.pushReplacementNamed(context, 'usuarios');
+                      //empezar la conexion de SocketServer
+                    } else {
+                      // mostrar alerta de error o que algo
+                      showAlert(context, 'Login incorrecto',
+                          'Revise sus credenciales nuevamente');
+                    }
+                  },
             textBtn: 'Ingresar',
           )
         ],

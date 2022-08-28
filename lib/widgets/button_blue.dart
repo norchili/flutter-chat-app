@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ButtonBlue extends StatelessWidget {
-  final Function() onPresed;
+  final Function()? onPresed;
   final String textBtn;
   const ButtonBlue({Key? key, required this.onPresed, required this.textBtn})
       : super(key: key);
